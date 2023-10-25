@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException } from '@nestjs/common';
 import { CreateEmailDto } from './dto/create-email.dto';
 import { UpdateEmailDto } from './dto/update-email.dto';
 import { MailerService } from '@nestjs-modules/mailer';
@@ -17,6 +17,10 @@ export class EmailService {
       // html: updateQuoteDto.htmlQuote,
       attachments: [{ filename: `${updateQuoteDto.client_name}_cotiza.html`, content: updateQuoteDto.htmlQuote }]
     })
+    .catch((e) => {
+      console.log(e);
+      throw new HttpException(`ERROR_EMAIL ${e}`, 403);
+    });
     return 'ok';
   }
 
