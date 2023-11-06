@@ -9,13 +9,14 @@ export class EmailService {
 
   constructor(private mails: MailerService) { }
 
-  async quoteEmail(updateQuoteDto: UpdateQuoteDto) {
+  async quoteEmail(updateQuoteDto: UpdateQuoteDto, pdf: Buffer) {
     await this.mails.sendMail({
       to: updateQuoteDto.client_email,
       from: process.env.EMAIL_USER, // from: updateQuoteDto.agent_email,
       subject: 'Respuesta a su solicitud de cotización',
       // html: updateQuoteDto.htmlQuote,
-      attachments: [{ filename: `${updateQuoteDto.client_name}_cotiza.html`, content: updateQuoteDto.htmlQuote }]
+      attachments: [{ filename: `${updateQuoteDto.client_name}_cotiza.pdf`, content: pdf }]
+      // attachments: [{ filename: `${updateQuoteDto.client_name}_cotiza.html`, content: updateQuoteDto.htmlQuote }]
     })
     .catch((e) => {
       console.log(e);
