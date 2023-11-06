@@ -7,7 +7,7 @@ import { Quote } from './schemas/quote.schema';
 import { EmailService } from 'src/email/email.service';
 import { GeneralService } from 'src/general/general.service';
 import puppeteer from "puppeteer";
-import * as fs from 'fs';
+// import * as fs from 'fs';
 
 @Injectable()
 export class QuoteService {
@@ -63,7 +63,10 @@ export class QuoteService {
   // https://github.com/saemhco/nestjs-html-pdf/blob/main/src/index.ts
   async html2pdf(htmlQuote: string, options = {}) {
     try {
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({
+        headless: 'new',
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+      });
       const page = await browser.newPage();
       await page.setContent(htmlQuote);
       const buffer = await page.pdf({
@@ -84,6 +87,7 @@ export class QuoteService {
 
     } catch (e) {
       console.log(e);
+      // await browser.close();
     }
   }
 }

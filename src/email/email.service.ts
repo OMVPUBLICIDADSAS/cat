@@ -15,13 +15,15 @@ export class EmailService {
       from: process.env.EMAIL_USER, // from: updateQuoteDto.agent_email,
       subject: 'Respuesta a su solicitud de cotización',
       // html: updateQuoteDto.htmlQuote,
-      attachments: [{ filename: `${updateQuoteDto.client_name}_cotiza.pdf`, content: pdf }]
-      // attachments: [{ filename: `${updateQuoteDto.client_name}_cotiza.html`, content: updateQuoteDto.htmlQuote }]
+      attachments: [
+        { filename: `${updateQuoteDto.client_name}_cotiza.pdf`, content: pdf },
+        { filename: `${updateQuoteDto.client_name}_cotiza.html`, content: updateQuoteDto.htmlQuote }
+      ],
     })
-    .catch((e) => {
-      console.log(e);
-      throw new HttpException(`ERROR_EMAIL ${e}`, 403);
-    });
+      .catch((e) => {
+        console.log(e);
+        throw new HttpException(`ERROR_EMAIL ${e}`, 403);
+      });
     return 'ok';
   }
 
