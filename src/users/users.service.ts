@@ -1,4 +1,4 @@
-import { HttpException, Injectable, UseGuards } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { LoginUserDto } from './dto/login-user.dto';
 import { RegisterUserDto } from './dto/register-user.dto';
 import { hash, compare } from 'bcrypt'

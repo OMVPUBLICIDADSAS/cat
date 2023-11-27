@@ -43,6 +43,11 @@ export class QuoteService {
     return await this.quoteModel.findById({ consecutive: id }).exec();
   }
 
+  async resend(id: string, updateQuoteDto: UpdateQuoteDto): Promise<Quote> {
+    const pdfBuffer = await this.html2pdf(updateQuoteDto.htmlQuote);
+    return this.emails.quoteEmail(updateQuoteDto, pdfBuffer);
+  }
+
   async update(id: string, updateQuoteDto: UpdateQuoteDto): Promise<Quote> {
 
     // si user no es el mismo, no lo actualiza
@@ -50,7 +55,7 @@ export class QuoteService {
     if (prevQuote.status === 4) throw new HttpException('FORBIDDEN', 403);
     if (updateQuoteDto.status === 4) {
       const pdfBuffer = await this.html2pdf(updateQuoteDto.htmlQuote);
-      this.emails.quoteEmail(updateQuoteDto, pdfBuffer);
+      await this.emails.quoteEmail(updateQuoteDto, pdfBuffer);
     }
     return await this.quoteModel.findByIdAndUpdate(id, updateQuoteDto, { new: true });
   }

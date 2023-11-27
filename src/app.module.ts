@@ -21,6 +21,7 @@ import { GeneralModule } from './general/general.module';
       transport: {
         host: process.env.SMPT_EMAIL_LONG,
         port: process.env.SMPT_PORT,
+        ignoreTLS: true,
         secure: true, // use SSL
         auth: {
           user: process.env.EMAIL_USER,

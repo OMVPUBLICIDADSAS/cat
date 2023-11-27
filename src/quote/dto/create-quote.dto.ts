@@ -15,7 +15,7 @@ export class CreateQuoteDto {
   client_phone: string;
 
   @IsNotEmpty()
-  @IsEmail()
+  @IsString()
   client_email: string;
 
   @IsOptional()

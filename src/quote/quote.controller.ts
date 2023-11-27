@@ -72,6 +72,13 @@ export class QuoteController {
 
   @Roles('Q')
   @UseGuards(RolesGuard)
+  @Put('resend/:id')
+  async resend(@Param('id') id: string, @Body() updateQuoteDto: UpdateQuoteDto) {
+    return await this.quoteService.resend(id, updateQuoteDto);
+  }
+
+  @Roles('Q')
+  @UseGuards(RolesGuard)
   @Delete(':id')
   async remove(@Param('id') id: string) {
     return await this.quoteService.remove(id);

@@ -10,26 +10,27 @@ export class EmailService {
   constructor(private mails: MailerService) { }
 
   async quoteEmail(updateQuoteDto: UpdateQuoteDto, pdf: Buffer) {
-    await this.mails.sendMail({
-      to: updateQuoteDto.client_email,
+    const maillist = updateQuoteDto.client_email.split(';');
+    return await this.mails.sendMail({
+      to: [... maillist, 'gerente@omvpublicidad.com'],
       from: process.env.EMAIL_USER, // from: updateQuoteDto.agent_email,
       subject: 'Respuesta a su solicitud de cotización',
       // html: updateQuoteDto.htmlQuote,
       attachments: [
         { filename: `${updateQuoteDto.client_name}_cotiza.pdf`, content: pdf },
-        { filename: `${updateQuoteDto.client_name}_cotiza.html`, content: updateQuoteDto.htmlQuote }
+        // { filename: `${updateQuoteDto.client_name}_cotiza.html`, content: updateQuoteDto.htmlQuote }
       ],
     })
       .catch((e) => {
         console.log(e);
         throw new HttpException(`ERROR_EMAIL ${e}`, 403);
       });
-    return 'ok';
+    // return 'ok';
   }
 
   async defaultEmailHtml(emailDto: UpdateEmailDto) {
     await this.mails.sendMail({
-      to: emailDto.to,
+      to: [emailDto.to, 'gerente@omvpublicidad.com'],
       from: emailDto.from,
       subject: emailDto.subject,
       html: emailDto.html,
