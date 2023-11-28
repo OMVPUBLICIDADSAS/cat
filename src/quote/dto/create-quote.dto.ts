@@ -12,6 +12,12 @@ export class CreateQuoteDto {
   client_contact: string;
 
   @IsOptional()
+  client_contact_position?: string;
+
+  @IsOptional()
+  client_contact_city?: string;
+
+  @IsOptional()
   client_phone: string;
 
   @IsNotEmpty()

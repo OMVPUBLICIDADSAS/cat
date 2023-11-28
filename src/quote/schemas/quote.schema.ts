@@ -17,6 +17,12 @@ export class Quote {
   client_contact: string;
 
   @Prop()
+  client_contact_position?: string;
+
+  @Prop()
+  client_contact_city?: string;
+
+  @Prop()
   client_phone: string;
 
   @Prop({required: true})

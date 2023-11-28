@@ -19,7 +19,7 @@ export class QuoteService {
 
   async create(createQuoteDto: CreateQuoteDto): Promise<Quote> {
     const consecutive = await this.generalService.consecutive();
-    createQuoteDto.consecutive = consecutive.toString().padStart(8, '0');
+    createQuoteDto.consecutive = consecutive.toString().padStart(6, '0');
     const createdQuote = new this.quoteModel(createQuoteDto);
     return await createdQuote.save();
   }
