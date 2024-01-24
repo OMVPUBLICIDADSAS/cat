@@ -38,10 +38,10 @@ export class CatalogController {
   }
 
   // https://stackoverflow.com/questions/26079611/node-js-typeerror-path-must-be-absolute-or-specify-root-to-res-sendfile-failed
-  
+
   @Get(':imagename')
   getImageByName(@Param('imagename') imagename, @Res() res): Observable<object> {
-   
+
     const upr = imagename.toUpperCase();
     return of(res.sendFile(join('.catalog/', this.IMAGEFOLDER, upr), { root: '.' }));
     /*
@@ -138,22 +138,23 @@ export class CatalogController {
         }
         // ................................................................
         const formData = {
-          'familia': worksheetProd.getRow(i).getCell(1).value,
-          'descripcion_comercial': worksheetProd.getRow(i).getCell(2).value,
-          'descripcion_larga': worksheetProd.getRow(i).getCell(3).value,
-          'material': worksheetProd.getRow(i).getCell(4).value,
-          'medidas_omv': worksheetProd.getRow(i).getCell(5).value,
-          'area_impresion': worksheetProd.getRow(i).getCell(6).value,
-          'tecnica_marca_descripcion': worksheetProd.getRow(i).getCell(7).value,
+          'familia': worksheetProd.getRow(i).getCell(1).text || '',
+          'descripcion_comercial': worksheetProd.getRow(i).getCell(2).text || '',
+          'descripcion_larga': worksheetProd.getRow(i).getCell(3).text || '',
+          'material': worksheetProd.getRow(i).getCell(4).text || '',
+          'medidas_omv': worksheetProd.getRow(i).getCell(5).text || '',
+          'area_impresion': worksheetProd.getRow(i).getCell(6).text || '',
+          'tecnica_marca_descripcion': worksheetProd.getRow(i).getCell(7).text || '',
           'imagen': ImageData,
-          'precio': worksheetProd.getRow(i).getCell(10).value,
-          'existencia': worksheetProd.getRow(i).getCell(11).value,
+          'precio': worksheetProd.getRow(i).getCell(10).text || 0,
+          'existencia': worksheetProd.getRow(i).getCell(11).text || 0,
+          'lista_colores': worksheetProd.getRow(i).getCell(16).text || '',
           'subcategoria_1': {
-            'jerarquia': worksheetProd.getRow(i).getCell(14).value,
-            'nombre': worksheetProd.getRow(i).getCell(15).value,
+            'jerarquia': worksheetProd.getRow(i).getCell(14).text || '',
+            'nombre': worksheetProd.getRow(i).getCell(15).text || '',
             'categoria': {
-              'jerarquia': worksheetProd.getRow(i).getCell(12).value,
-              'nombre': worksheetProd.getRow(i).getCell(13).value,
+              'jerarquia': worksheetProd.getRow(i).getCell(12).text || '',
+              'nombre': worksheetProd.getRow(i).getCell(13).text || '',
             }
           },
           'materiales': materiales
@@ -199,10 +200,10 @@ export class CatalogController {
         }
 
         const formData = {
-          'codigo': matData.getRow(r).getCell(2).value,
-          'color_nombre': matData.getRow(r).getCell(3).value,
-          'inventario': matData.getRow(r).getCell(4).value,
-          'precio': matData.getRow(r).getCell(5).value,
+          'codigo': matData.getRow(r).getCell(2).text || '',
+          'color_nombre': matData.getRow(r).getCell(3).text || '',
+          'inventario': matData.getRow(r).getCell(4).text || 0,
+          'precio': matData.getRow(r).getCell(5).text || 0,
           'imagenes': imagelist
         }
         result.push(formData)

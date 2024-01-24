@@ -25,6 +25,9 @@ export class CreateCatalogDto {
     subcategoria_1: object;
 
     @IsNotEmpty()
-    'materiales': object[];
+    materiales: object[];
+
+    @IsString()
+    lista_colores: string;
 
 }

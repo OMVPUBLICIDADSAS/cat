@@ -42,6 +42,9 @@ export class Catalog {
 
     @Prop()
     tecnica_marca_descripcion?: string;
+
+    @Prop()
+    lista_colores: string;
  
 }
 
