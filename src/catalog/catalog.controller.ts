@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Param, UseInterceptors, UploadedFile, Res, UploadedFiles, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Param, UseInterceptors, UploadedFile, Res, UploadedFiles, UseGuards, Put, Delete, Body } from '@nestjs/common';
 import { CatalogService } from './catalog.service';
-import { AnyFilesInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 // import { extname } from 'path';
 import { CellErrorValue, CellFormulaValue, CellHyperlinkValue, CellRichTextValue, CellSharedFormulaValue, Workbook } from 'exceljs';
@@ -11,6 +11,7 @@ import { Observable, of } from 'rxjs';
 import { join } from 'path';
 import { Roles } from 'src/users/roles.decorator';
 import { RolesGuard } from 'src/users/roles.guard';
+import { UpdateCatalogDto } from './dto/update-catalog.dto';
 // import * as sharp from 'sharp'
 
 
@@ -39,26 +40,53 @@ export class CatalogController {
 
   // https://stackoverflow.com/questions/26079611/node-js-typeerror-path-must-be-absolute-or-specify-root-to-res-sendfile-failed
 
+  /*
   @Get(':imagename')
   getImageByName(@Param('imagename') imagename, @Res() res): Observable<object> {
 
     const upr = imagename.toUpperCase();
     return of(res.sendFile(join('.catalog/', this.IMAGEFOLDER, upr), { root: '.' }));
-    /*
-    const upr = imagename.toUpperCase();
-    return of(res.sendFile(join(__dirname + `${this.IMAGEFOLDER}${upr}`)))
-    */
-  }
-
-  /*
-  @Get(':imagename')
-  getImageByName(@Param('imagename') imagename, @Res() res): Observable<object> {
-    // console.log(join('./images', imagename));
-    return of(res.sendFile(join('./images', imagename)))
   }
   */
 
+  @Get(':imagename')
+  getImageByName(@Param('imagename') imagename, @Res() res): Observable<object> {
+    const upr = imagename.toUpperCase();
+    let apath = '';
+    if (process.env.DEV_STATUS) {
+      apath = join(__dirname, '..', process.env.DEFA_DIR, upr);
+    } else {
+      apath = join(process.env.RAILWAY_VOLUME_MOUNT_PATH, upr);
+    }
+    return of(res.sendFile(apath));
+  }
+
+  @Post('images2dtbase_')
+  @UseInterceptors(AnyFilesInterceptor())
+  uploadFiles(@UploadedFiles() files: Array<Express.Multer.File>) {
+    let apath = '';
+    if (process.env.DEV_STATUS) {
+      apath = join(__dirname, '..', process.env.DEFA_DIR);
+      if (!fs.existsSync(apath)) { fs.mkdirSync(apath); }
+    } else {
+      apath = process.env.RAILWAY_VOLUME_MOUNT_PATH; // process.env.DEFA_DIR solo esta ruta
+    }
+    // const dir = files[0].originalname.toUpperCase();
+    // apath = join(apath, dir);
+    // if (!fs.existsSync(apath)) { fs.mkdirSync(apath); }
+    for (let i = 0; i < files.length; i++) {
+      const upr = files[i].originalname.toUpperCase();
+      const destPath = join(apath, upr);
+      fs.writeFileSync(destPath, files[i].buffer);
+    }
+    return { status: 200, message: apath }
+  }
+
+
+
+
   // https://stackoverflow.com/questions/71198822/upload-dynamic-multiple-files-in-nest-js
+  /*
   @Post('images2dtbase2')
   @UseInterceptors(AnyFilesInterceptor())
   uploadimgdb(@UploadedFiles() files: Array<Express.Multer.File>) {
@@ -73,8 +101,10 @@ export class CatalogController {
     })
     return { status: 200, message: apath }
   }
+  */
 
 
+  /*
   @Roles('P')
   @UseGuards(RolesGuard)
   @Post('images2dtbase')
@@ -90,6 +120,7 @@ export class CatalogController {
     })
     return { status: 200, message: apath }
   }
+  */
 
   @Roles('P')
   @UseGuards(RolesGuard)
@@ -185,14 +216,14 @@ export class CatalogController {
 
         const imagelist = [];
         for (let k = 6; k < 10; k++) {
-          if (matData.getRow(r).getCell(k).value && matData.getRow(r).getCell(k).value.toString().length > 0) {
-            // pictArray.push(this.getImageName(matData.getRow(r).getCell(k).value.toString()));
-            // pictArray.push(this.getImageName(matData.getRow(r).getCell(k).value.toString()));
+          if (matData.getRow(r).getCell(k).value && matData.getRow(r).getCell(k).text.length > 0) {
+            // pictArray.push(this.getImageName(matData.getRow(r).getCell(k).value.text));
+            // pictArray.push(this.getImageName(matData.getRow(r).getCell(k).value.text));
             const ImageData = {
               'id': r,
               'imagen': {
-                'file_md': this.getImageName(matData.getRow(r).getCell(k).value.toString()),
-                'file_sm': this.getImageName(matData.getRow(r).getCell(k).value.toString()),
+                'file_md': this.getImageName(matData.getRow(r).getCell(k).text),
+                'file_sm': this.getImageName(matData.getRow(r).getCell(k).text),
               }
             }
             imagelist.push(ImageData)
@@ -231,17 +262,21 @@ export class CatalogController {
   findOne(@Param('id') id: string) {
     return this.catalogService.findOne(+id);
   }
+  */
 
-  @Patch(':id')
+  @Roles('P')
+  @UseGuards(RolesGuard)
+  @Put(':id')
   update(@Param('id') id: string, @Body() updateCatalogDto: UpdateCatalogDto) {
-    return this.catalogService.update(+id, updateCatalogDto);
+    return this.catalogService.update(id, updateCatalogDto);
   }
 
+  @Roles('P')
+  @UseGuards(RolesGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.catalogService.remove(+id);
+    return this.catalogService.remove(id);
   }
-  */
 
 }
 
