@@ -24,6 +24,13 @@ export class CatalogController {
   private IMAGEFOLDER = '/images/';
   // private IMAGEGETFOLDER = 'http://localhost:3000/catalog/';
 
+  @Get('dtbase2Json')
+  async dtbase2Json() {
+    return await this.catalogService.dtbase2Json();
+  }
+  
+  
+
   @Get()
   findAll() {
     return this.catalogService.findAll();
